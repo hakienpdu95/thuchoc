@@ -363,12 +363,24 @@ require_once get_theme_file_path('app/Helpers/SMTPMailer.php');
     '*'
 ]);
 
-// Nếu muốn bump TẤT CẢ meta cho 1 CPT nào đó (ví dụ test):
-// \App\Database\CustomTableManager::register('video', ['*']);
+\App\Database\CustomTableManager::register('jobs', ['*']);
+// === CACHE TOTAL JOBS CHO SCALE 200K+ (rất quan trọng) ===
+add_action('save_post_jobs', function () {
+    \App\Helpers\CacheHelper::bumpDataVersion('jobs');
+}, 10);
+
+add_action('deleted_post', function ($post_id) {
+    if (get_post_type($post_id) === 'jobs') {
+        \App\Helpers\CacheHelper::bumpDataVersion('jobs');
+    }
+}, 10);
 
 // === ARCHIVE FILTERS – MODULAR ===
 require_once get_theme_file_path('app/Archives/EventArchive.php');
 \App\Archives\EventArchive::init();
+
+require_once get_theme_file_path('app/Archives/JobsArchive.php');
+\App\Archives\JobsArchive::init();
 
 // === ADMIN COLUMNS – MODULAR 10/10 ===
 require_once get_theme_file_path('app/Admin/EventColumns.php');
@@ -474,6 +486,7 @@ require_once get_theme_file_path('app/Helpers/LocationHelper.php');
 \App\Database\CustomTableManager::register('viet-product', ['province_code', 'ward_code']);
 \App\Database\CustomTableManager::register('viet-heritage', ['province_code', 'ward_code']);
 \App\Database\CustomTableManager::register('viet-travel', ['province_code', 'ward_code']);
+\App\Database\CustomTableManager::register('jobs', ['province_code', 'ward_code']);
 
 // === SEARCH MODULE 11/10 – TỐI ƯU CAO NHẤT ===
 require_once get_theme_file_path('app/Search/SearchManager.php');
@@ -495,7 +508,7 @@ require_once get_theme_file_path('app/Queries/MergedPostsQuery.php');
 \App\Queries\MergedPostsQuery::initArchive('event',   ['posts_per_page' => 2]);
 \App\Queries\MergedPostsQuery::initArchive('viet-heritage',   ['posts_per_page' => 2]);
 \App\Queries\MergedPostsQuery::initArchive('viet-product',   ['posts_per_page' => 2]);
-// \App\Queries\MergedPostsQuery::initArchive('project', ['posts_per_page' => 9]);
+\App\Queries\MergedPostsQuery::initArchive('jobs', ['posts_per_page' => 2]);
 // \App\Queries\MergedPostsQuery::initArchive('news',    ['posts_per_page' => 15]);
 
 /**
@@ -592,3 +605,21 @@ add_action('rwmb_after_save_post', function ($post_id) {
     // Debug log (xem kết quả)
     error_log("=== [FORCE SAVE] ward_code = '" . $ward_code . "' | post_id = {$post_id} ===");
 }, 20);
+
+// === HỖ TRỢ ?page= CHO JOBS ARCHIVE (bắt buộc) ===
+add_filter('query_vars', function ($vars) {
+    $vars[] = 'page';
+    return $vars;
+});
+
+// Force map ?page=N → paged cho CPT jobs
+add_action('pre_get_posts', function ($query) {
+    if (is_admin() || !$query->is_main_query() || !is_post_type_archive('jobs')) {
+        return;
+    }
+    if (isset($_GET['page']) && $_GET['page'] > 0) {
+        $paged = max(1, (int)$_GET['page']);
+        $query->set('paged', $paged);
+        error_log("[JOBS_FORCE_PAGED] Set paged = {$paged} from ?page=");
+    }
+}, 11);

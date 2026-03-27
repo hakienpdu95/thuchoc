@@ -21,6 +21,7 @@ class PlaceholderHandler
         'viet-heritage' => 'placeholder.png',
         'viet-product' => 'placeholder.png',
         'viet-travel' => 'placeholder.png',
+        'jobs' => 'placeholder.png',
     ];
 
     /** Cache siêu mạnh (per post & per file) */

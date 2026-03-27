@@ -92,16 +92,20 @@ class PaginationHelper {
         return '<li>' . self::getLink($page, (string)$page) . '</li>';
     }
 
-    private static function getLink(int $page, string $label, string $extra_class = ''): string
-    {
-        $base = (is_front_page() || is_home())
-            ? trailingslashit(home_url()) . 'page/%#%/'
-            : str_replace('999999999', '%#%', esc_url(get_pagenum_link(999999999)));
+    private static function getLink(int $page, string $label, string $extra_class = ''): string {
+        // Force dùng archive URL của jobs + query param ?page= (theo đúng yêu cầu bạn)
+        $archive_url = get_post_type_archive_link('jobs') ?: home_url('/jobs/');
 
-        $url = str_replace('%#%', $page, $base);
-        $class = 'page-numbers';
-        if ($extra_class) $class .= ' ' . $extra_class;
+        $url = add_query_arg('page', $page, $archive_url);
+        if ($page === 1) {
+            $url = $archive_url; // Trang 1 không có ?page=1 (sạch sẽ)
+        }
 
-        return '<a class="' . $class . '" href="' . esc_url($url) . '">' . $label . '</a>';
+        $class = 'page-numbers js-ajax-page';
+        if ($extra_class) {
+            $class .= ' ' . $extra_class;
+        }
+
+        return '<a class="' . $class . '" href="' . esc_url($url) . '" data-page="' . $page . '">' . esc_html($label) . '</a>';
     }
 }

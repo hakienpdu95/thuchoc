@@ -91,7 +91,7 @@ class CacheHelper
         }
 
         // === BUMP CHO DANH SÁCH MERGED (post + event) ===
-        if (in_array($post_type, ['post', 'event', 'viet-heritage', 'viet-product', 'viet-travel', 'member'])) {
+        if (in_array($post_type, ['post', 'event', 'viet-heritage', 'viet-product', 'viet-travel', 'member', 'jobs'])) {
             self::bumpDataVersion('content_list');
         }
         
