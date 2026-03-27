@@ -99,4 +99,22 @@ class CacheHelper
             error_log("🗑️ [CacheHelper] FLUSH → Post #{$post_id} ({$post_type})");
         }
     }
+
+    public static function getPostTypeCount(string $post_type): int {
+        if (empty($post_type)) return 0;
+
+        $version = self::getDataVersion($post_type);
+        $key = "total_count:{$post_type}:v{$version}";
+
+        return self::remember($key, 3600, function () use ($post_type) { 
+            global $wpdb;
+            $count = (int) $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM {$wpdb->posts} 
+                 WHERE post_type = %s AND post_status = 'publish'",
+                $post_type
+            ));
+            if (self::$debug) error_log("[CACHE COUNT] {$post_type} = {$count}");
+            return $count;
+        });
+    }
 }

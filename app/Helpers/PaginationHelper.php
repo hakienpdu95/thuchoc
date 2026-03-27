@@ -7,14 +7,13 @@ class PaginationHelper {
      * - ≤ 7 trang   → Hiển thị hết (1 2 3 4 5 6 7)
      * - ≥ 8 trang   → Thu gọn thông minh: 1 2 3 ... 8 9 10
      */
-    public static function numberPagination(?\WP_Query $query = null): string
-    {
+    public static function numberPagination(?\WP_Query $query = null, ?int $forced_max_pages = null): string {
         if (!$query) {
             global $wp_query;
             $query = $wp_query;
         }
 
-        $total   = (int) $query->max_num_pages;
+        $total = $forced_max_pages ?? (int) $query->max_num_pages;
         $current = max(1, (int) $query->get('paged'));
 
         if ($total <= 1) return '';
