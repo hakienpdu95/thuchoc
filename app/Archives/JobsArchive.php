@@ -6,12 +6,10 @@ use App\Helpers\PaginationHelper;
 use App\Helpers\CacheHelper;
 
 class JobsArchive {
-    private static $posts_per_page = 2;   // Bạn đang test = 2, sau đổi thành 12-16
+    private static $posts_per_page = 2;   // Bạn đang test = 2 (sau đổi thành 12-16)
 
     public static function init(): void {
         add_action('pre_get_posts', [self::class, 'modifyQuery'], 20);
-        
-        // Force pagination cho initial load
         add_action('wp', [self::class, 'forceInjectPagination'], 5);
 
         add_action('wp_ajax_load_jobs_archive', [self::class, 'ajaxLoad']);
@@ -54,51 +52,68 @@ class JobsArchive {
 
     public static function ajaxLoad(): void {
         $paged = max(1, (int) ($_POST['paged'] ?? 1));
-        $version = CacheHelper::getDataVersion('jobs');
-        $cache_key = "jobs_archive_page_{$paged}_v{$version}";
 
-        // === TẠM TẮT CACHE ĐỂ TEST (bạn có thể bật lại sau khi OK) ===
-        // $data = CacheHelper::remember($cache_key, 1800, function () use ($paged) {
-
-        error_log("=== [JOBS_AJAX_DEBUG] BẮT ĐẦU PAGE {$paged} ===");
-
+        // === LẤY TOTAL TRƯỚC ĐỂ CACHE KEY CHÍNH XÁC (tránh cache rỗng vĩnh viễn) ===
         $total_posts = CacheHelper::getPostTypeCount('jobs');
-        $max_pages   = max(1, (int) ceil($total_posts / self::$posts_per_page));
+        $version     = CacheHelper::getDataVersion('jobs');
+        $cache_key   = "jobs_archive_page_{$paged}_total{$total_posts}_v{$version}";
 
-        $query = new WP_Query([
-            'post_type'              => 'jobs',
-            'paged'                  => $paged,
-            'posts_per_page'         => self::$posts_per_page,
-            'orderby'                => 'date',
-            'order'                  => 'DESC',
-            'post_status'            => 'publish',
-            'no_found_rows'          => true,
-            'update_post_meta_cache' => false,
-            'update_post_term_cache' => false,
-            'suppress_filters'       => false, 
-            'ignore_sticky_posts'    => true,
-        ]);
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log("=== [JOBS_AJAX_DEBUG] BẮT ĐẦU AJAX Page {$paged} | Cache key: {$cache_key} | Total jobs: {$total_posts} ===");
+        }
 
-        error_log("[JOBS_AJAX_DEBUG] Page {$paged} | Found posts: {$query->found_posts} | Post count: {$query->post_count} | Max pages: {$max_pages}");
-        error_log("[JOBS_AJAX_DEBUG] SQL: " . $query->request);
+        try {
+            $data = CacheHelper::remember($cache_key, 1800, function () use ($paged, $total_posts) {
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log("=== [JOBS_AJAX_MISS] Chạy query THẬT cho page {$paged} ===");
+                }
 
-        // Fake cho Blade + Pagination
-        $query->found_posts   = $total_posts;
-        $query->max_num_pages = $max_pages;
+                $max_pages = max(1, (int) ceil($total_posts / self::$posts_per_page));
 
-        $content    = \Roots\view('partials.content-listing', ['query' => $query])->render();
-        $pagination = PaginationHelper::numberPagination($query, $max_pages);
+                $query = new WP_Query([
+                    'post_type'              => 'jobs',
+                    'paged'                  => $paged,
+                    'posts_per_page'         => self::$posts_per_page,
+                    'orderby'                => 'date',
+                    'order'                  => 'DESC',
+                    'post_status'            => 'publish',
+                    'no_found_rows'          => true,
+                    'update_post_meta_cache' => false,
+                    'update_post_term_cache' => false,
+                    'suppress_filters'       => false,
+                    'ignore_sticky_posts'    => true,
+                ]);
 
-        error_log("[JOBS_AJAX_DEBUG] RENDER DONE - Content length: " . strlen($content));
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log("[JOBS_AJAX_MISS] Page {$paged} → Post count: {$query->post_count} | SQL: " . $query->request);
+                }
 
-        $data = [
-            'content'    => $content,
-            'pagination' => $pagination,
-            'max_pages'  => $max_pages,
-        ];
+                $query->found_posts   = $total_posts;
+                $query->max_num_pages = $max_pages;
 
-        // }); // ← comment dòng này nếu bạn tắt cache ở trên
+                $content    = \Roots\view('partials.content-listing', ['query' => $query])->render();
+                $pagination = PaginationHelper::numberPagination($query, $max_pages);
 
-        wp_send_json_success($data);
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log("[JOBS_AJAX_MISS] Render xong - Content length: " . strlen($content));
+                }
+
+                return [
+                    'content'    => $content,
+                    'pagination' => $pagination,
+                    'max_pages'  => $max_pages,
+                ];
+            });
+
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log("[JOBS_AJAX_DEBUG] ✅ TRẢ CACHE HIT cho page {$paged}");
+            }
+
+            wp_send_json_success($data);
+
+        } catch (\Throwable $e) {
+            error_log("[JOBS_AJAX_FATAL] ❌ Page {$paged}: " . $e->getMessage());
+            wp_send_json_error(['message' => 'Lỗi server', 'debug' => $e->getMessage()]);
+        }
     }
 }
