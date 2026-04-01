@@ -4,9 +4,6 @@ namespace App\Optimizations;
 
 use Illuminate\Support\Facades\Vite;
 
-/**
- * PRELOAD OPTIMIZER 12/10 – ĐÃ FIX HOÀN TOÀN FAVICON 404
- */
 class PreloadOptimizer
 {
     private static array $config = [
@@ -17,13 +14,12 @@ class PreloadOptimizer
         'fetchpriority'    => 'high',
 
         // ==================== FAVICON – ĐÃ FIX 404 (KHOANH VÙNG QUAN TRỌNG) ====================
-        'favicon_path'     => 'public/build/images/favicon.ico',   // ← Giữ nguyên logic code cũ của bạn
-        'apple_touch'      => 'public/build/images/apple-touch-icon.png', // tùy chọn
+        'favicon_path'     => 'public/build/images/favicon.ico',   
+        'apple_touch'      => 'public/build/images/apple-touch-icon.png', 
         // ====================================================================================
 
         'preload_fonts' => [
-            'public/build/fonts/Roboto-Regular.woff2' => 'font/woff2',
-            'public/build/fonts/Roboto-Medium.woff2'  => 'font/woff2',
+            
         ],
         'google_font_urls' => [],
         'preconnect' => [
