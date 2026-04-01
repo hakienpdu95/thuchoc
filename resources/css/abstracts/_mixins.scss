@@ -11,3 +11,9 @@
     @content;
   }
 }
+
+@mixin mq-screen-not-max($key) {
+  @media screen and not (max-width: map-get($breakpoints, $key)) {
+    @content;
+  }
+}

@@ -12,7 +12,7 @@
         @include('partials.body-common') 
         @include('sections.header') 
         <main>
-             @yield('content')
+             <!-- @yield('content') -->
             <div class="bg-[linear-gradient(to_bottom,#DBEDFF_0%,#FFFFFF_100%)] -mt-16 pt-28 md:pt-32 pb-20 relative">
                 <div class="bg-[radial-gradient(circle_at_top_left,rgba(28,106,195,0.33)_0%,rgba(255,255,255,0)_40rem)] absolute top-0 bottom-0 right-0 left-0 pointer-events-none"></div>
                 <div class="container max-w-7xl mx-auto px-5 py-0">

@@ -226,17 +226,7 @@
 
         </div>
     </section>
-    @include('partials.blocks.tabs-highlight')
 
-    {{ sage_prefetch_link_posts($wp_query->posts ?? []) }}
-
-    @php
-        global $wp_query;
-        $query = $wp_query;
-    @endphp
-
-    @include('partials.content-listing', ['query' => $query])
-    {!! \App\Helpers\PaginationHelper::numberPagination($query) !!}
 @endsection
 
 @section('sidebar')

@@ -1,33 +1,40 @@
-@use '../abstracts' as *;
+@use "../abstracts" as *;
 
 @layer components {
-  .container {
-    margin-inline: auto;
-    /*padding-inline: 1rem;*/
-    
-    @include mq(sm) {
-      /*padding-inline: 0;*/
+    .container {
+        margin-inline: auto;
+
+        @include mq(sm) {
+            
+        }
+
+        @include mq-max(sm) {
+            
+        }
+
+        @include mq("2xl") {
+            max-width: 1110px !important;
+            width: 100%;
+        }
     }
 
-    @include mq-max(sm) {
-      /*padding-inline: 0;*/
-    }
+    .scroll-to-top {
+        &.hide {
+            visibility: hidden;
+            opacity: 0%;
+        }
 
-    @include mq('2xl') {
-      max-width: 1110px !important;
-      width: 100%;
+        &.active {
+            visibility: visible;
+            opacity: 100%;
+        }
     }
-  }
+}
 
-  .scroll-to-top {
-    &.hide {
-      visibility: hidden;
-      opacity: 0%;
+.lg\:container {
+    @include mq(lg) {
+        @include mq-screen-not-max(xl) {
+            max-width: 80rem;
+        }
     }
-
-    &.active {
-      visibility: visible;
-      opacity: 100%;
-    }
-  }
 }
