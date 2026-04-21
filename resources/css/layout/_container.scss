@@ -13,7 +13,7 @@
         }
 
         @include mq("2xl") {
-            max-width: 1110px !important;
+            max-width: 1180px !important;
             width: 100%;
         }
     }
@@ -31,10 +31,10 @@
     }
 }
 
-.lg\:container {
-    @include mq(lg) {
-        @include mq-screen-not-max(xl) {
-            max-width: 80rem;
-        }
-    }
+.container {
+    margin-inline: auto;
+}
+
+.container\! {
+    margin-inline: auto !important;
 }

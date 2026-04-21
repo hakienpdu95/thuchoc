@@ -235,3 +235,8 @@ define('SMTP_USERNAME', 'dohakien395@gmail.com');
 define('SMTP_PASSWORD', 'ufjv zdot nsmu mfhm');      
 define('SMTP_FROM',     'dohakien395@gmail.com');          
 define('SMTP_FROM_NAME', 'vigiadinhcomvn');        
+
+ID triển khai
+AKfycbxtl4aLPwjr0eIRXHcG-btUIfLSanyUGpxJdj7566CLe6vkPpMf9fyqs3BTm1T2qnAb
+Ứng dụng web
+https://script.google.com/macros/s/AKfycbxtl4aLPwjr0eIRXHcG-btUIfLSanyUGpxJdj7566CLe6vkPpMf9fyqs3BTm1T2qnAb/exec
