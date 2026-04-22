@@ -42,7 +42,6 @@ header {
     border-bottom: 1px solid rgba(226, 61, 99, 0.08);
 }
 .nav {
-    height: 74px;
     display: flex;
     align-items: center;
     justify-content: space-between;

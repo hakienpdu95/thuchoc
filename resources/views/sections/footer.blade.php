@@ -4,10 +4,7 @@
             <div class="grid xl:grid-cols-5 md:grid-cols-3 gap-10 lg:gap-16">
                 <div class="xl:col-span-2 md:col-span-3">
                     <div>
-                        <a href="/aeropage/landing/company">
-                            <img src="/aeropage/assets/logo-dark-CbL8c2A5.png" alt="logo" class="h-10 flex dark:hidden">
-                            <img src="/aeropage/assets/logo-light-BmM6A7zf.png" alt="logo" class="h-10 hidden dark:flex">
-                        </a>
+                        <a class="logo" href="{{ home_url('/') }}"><img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-[275px]"></a>
                         <p class="text-base text-default-800 mt-6">Integer auctor aliquet martor, sed lorem malesuada eros blandit eget. Proin lacinia mortoc id odio vestibulum.</p>
                     </div>
                 </div>

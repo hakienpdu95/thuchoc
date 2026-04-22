@@ -1,16 +1,10 @@
 <header class="bg-white border-b shadow-sm top-0 z-50">
   <div class="container nav mx-auto px-4">
-    <div class="flex items-center justify-between py-5 lg:py-6 w-full">
+    <div class="flex items-center justify-between py-2 w-full">
       
       <!-- Brand -->
       <div class="brand flex items-center gap-3">
-        <div class="brand-mark w-11 h-11 bg-indigo-600 text-white text-3xl font-bold flex items-center justify-center rounded-2xl shadow-inner">
-          T
-        </div>
-        <div class="leading-none">
-          <div class="text-2xl lg:text-3xl font-bold tracking-tight text-gray-900">THUCHOCVN</div>
-          <small class="text-xs text-gray-500 font-medium">Học thật – Làm thật – Kiếm tiền thật</small>
-        </div>
+        <a class="logo" href="{{ home_url('/') }}"><img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-[275px]"></a>
       </div>
 
       <!-- Navigation links -->
