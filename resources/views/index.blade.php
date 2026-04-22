@@ -673,13 +673,17 @@ select {
     </div>
   </section>
 <script>
-// Thay YOUR_WEB_APP_URL bằng URL bạn vừa deploy ở bước 1
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxtl4aLPwjr0eIRXHcG-btUIfLSanyUGpxJdj7566CLe6vkPpMf9fyqs3BTm1T2qnAb/exec";
 
 async function calculateResult() {
   const btn = document.getElementById('submitBtn');
   const btnText = document.getElementById('btnText');
-  const originalBtnText = btnText.innerHTML;
+
+  // === VALIDATION FORM ===
+  if (!validateForm()) {
+    resetButton();
+    return;
+  }
 
   // Loading
   btn.disabled = true;
@@ -706,7 +710,7 @@ async function calculateResult() {
     if (picked.value === 'D') D++;
   }
 
-  // Tính group (giữ nguyên logic cũ của bạn)
+  // Tính group (giữ nguyên logic cũ)
   const scores = { A, B, C, D };
   let group = Object.keys(scores).reduce((a, b) => scores[a] >= scores[b] ? a : b);
   const goal = document.getElementById('goal').value;
@@ -723,30 +727,15 @@ async function calculateResult() {
 
   console.log('Group tính được:', group);
 
-      const map = {
-        A: {
-          title: '🔥 Bạn thuộc nhóm KIẾM TIỀN NHANH',
-          text: 'Bạn phù hợp với môi trường sale, tư vấn, giao tiếp và tạo kết quả sớm. Nhóm này rất hợp để bắt đầu với gói 7 ngày kiếm tiền đầu tiên.',
-          cta: '<a class="btn btn-primary" href="#goi">Xem gói phù hợp cho nhóm A</a>'
-        },
-        B: {
-          title: '🔵 Bạn thuộc nhóm CHUYÊN MÔN',
-          text: 'Bạn thiên về logic, học bài bản và cần một lộ trình rõ ràng. Bạn nên bắt đầu bằng tư vấn định hướng trước khi chọn hướng thực chiến.',
-          cta: '<a class="btn btn-primary" href="#goi">Xem gói tư vấn phù hợp</a>'
-        },
-        C: {
-          title: '🟢 Bạn thuộc nhóm THỰC CHIẾN',
-          text: 'Bạn hợp với môi trường làm thật, thấy kết quả thật và học qua trải nghiệm. Đây là nhóm rất phù hợp để đi tiếp vào doanh nghiệp.',
-          cta: '<a class="btn btn-primary" href="#goi">Xem lộ trình vào doanh nghiệp</a>'
-        },
-        D: {
-          title: '🟡 Bạn thuộc nhóm TỰ DO / SÁNG TẠO',
-          text: 'Bạn thiên về sự linh hoạt, sáng tạo và thích tự chủ hơn trong cách kiếm tiền. Bạn nên bắt đầu với lộ trình ngắn để test thị trường trước.',
-          cta: '<a class="btn btn-primary" href="#goi">Xem gói khởi động phù hợp</a>'
-        }
-      };
+  // Map kết quả
+  const map = {
+    A: { title: '🔥 Bạn thuộc nhóm KIẾM TIỀN NHANH', text: 'Bạn phù hợp với môi trường sale, tư vấn, giao tiếp và tạo kết quả sớm. Nhóm này rất hợp để bắt đầu với gói 7 ngày kiếm tiền đầu tiên.', cta: '<a class="btn btn-primary" href="#goi">Xem gói phù hợp cho nhóm A</a>' },
+    B: { title: '🔵 Bạn thuộc nhóm CHUYÊN MÔN', text: 'Bạn thiên về logic, học bài bản và cần một lộ trình rõ ràng. Bạn nên bắt đầu bằng tư vấn định hướng trước khi chọn hướng thực chiến.', cta: '<a class="btn btn-primary" href="#goi">Xem gói tư vấn phù hợp</a>' },
+    C: { title: '🟢 Bạn thuộc nhóm THỰC CHIẾN', text: 'Bạn hợp với môi trường làm thật, thấy kết quả thật và học qua trải nghiệm. Đây là nhóm rất phù hợp để đi tiếp vào doanh nghiệp.', cta: '<a class="btn btn-primary" href="#goi">Xem lộ trình vào doanh nghiệp</a>' },
+    D: { title: '🟡 Bạn thuộc nhóm TỰ DO / SÁNG TẠO', text: 'Bạn thiên về sự linh hoạt, sáng tạo và thích tự chủ hơn trong cách kiếm tiền. Bạn nên bắt đầu với lộ trình ngắn để test thị trường trước.', cta: '<a class="btn btn-primary" href="#goi">Xem gói khởi động phù hợp</a>' }
+  };
 
-     // HIỂN THỊ KẾT QUẢ (fix bằng style.display)
+  // Hiển thị kết quả
   document.getElementById('resultTitle').innerHTML = map[group].title;
   document.getElementById('resultText').innerHTML = map[group].text;
   document.getElementById('resultCTA').innerHTML = map[group].cta;
@@ -771,21 +760,75 @@ async function calculateResult() {
   console.log('Payload gửi đi:', payload);
 
   try {
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
+    await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
       mode: 'no-cors'
     });
-
     console.log('%c✅ Request đã gửi thành công đến Google Script', 'color: #10b981');
-    showToast("✅ Đã lưu lead vào Google Sheets!", "success");
+    // showToast("✅ Đã lưu lead vào Google Sheets!", "success");
   } catch (err) {
     console.error('❌ Lỗi khi gửi fetch:', err);
-    showToast("⚠️ Không kết nối được với Google Sheet", "error");
+    // showToast("⚠️ Không kết nối được với Google Sheet", "error");
   }
 
   resetButton();
+}
+
+// ====================== VALIDATION ======================
+function validateForm() {
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const goal = document.getElementById('goal').value;
+
+  // Reset highlight cũ
+  document.querySelectorAll('#formArea input, #formArea select').forEach(el => {
+    el.style.borderColor = '';
+  });
+
+  if (!name) {
+    showToast("Vui lòng nhập Họ và tên", "error");
+    document.getElementById('name').style.borderColor = '#ef4444';
+    document.getElementById('name').focus();
+    return false;
+  }
+
+  if (!phone) {
+    showToast("Vui lòng nhập Số điện thoại", "error");
+    document.getElementById('phone').style.borderColor = '#ef4444';
+    document.getElementById('phone').focus();
+    return false;
+  }
+  if (!/^[0-9]{10,11}$/.test(phone)) {
+    showToast("Số điện thoại phải là 10 hoặc 11 chữ số", "error");
+    document.getElementById('phone').style.borderColor = '#ef4444';
+    document.getElementById('phone').focus();
+    return false;
+  }
+
+  if (!email) {
+    showToast("Vui lòng nhập Email", "error");
+    document.getElementById('email').style.borderColor = '#ef4444';
+    document.getElementById('email').focus();
+    return false;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast("Email không đúng định dạng", "error");
+    document.getElementById('email').style.borderColor = '#ef4444';
+    document.getElementById('email').focus();
+    return false;
+  }
+
+  if (!goal) {
+    showToast("Vui lòng chọn Mục tiêu của bạn", "error");
+    document.getElementById('goal').style.borderColor = '#ef4444';
+    document.getElementById('goal').focus();
+    return false;
+  }
+
+  return true;
 }
 
 function resetButton() {
