@@ -1,12 +1,475 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+  .container {
+    width: min(var(--max), calc(100% - 32px));
+    margin: 0 auto;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 22px;
+    border-radius: 999px;
+    font-weight: 700;
+    border: 0;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+.btn:hover {
+    transform: translateY(-1px);
+}
+.btn-primary {
+    background: var(--accent);
+    color: #2f2a16;
+    box-shadow: 0 10px 24px rgba(255, 180, 0, 0.28);
+}
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(226, 61, 99, 0.08);
+}
+.nav {
+    height: 74px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 800;
+}
+.brand-mark {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), #ff6b8f);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    box-shadow: var(--shadow);
+}
+.brand small {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+.nav-links {
+    display: flex;
+    gap: 22px;
+    color: #485062;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.hero {
+    background: linear-gradient(135deg, #d93258 0%, #ea4b73 55%, #ff7a98 100%);
+    color: #fff;
+    overflow: hidden;
+    position: relative; 
+
+    h1 {
+      line-height: 1.4;
+    }
+}
+.hero:after {
+    content: "";
+    position: absolute;
+    width: 440px;
+    height: 440px;
+    right: -80px;
+    top: -100px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.13);
+}
+.hero-wrap {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    gap: 38px;
+    align-items: center;
+    padding: 78px 0 64px;
+}
+.eyebrow {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+h1 {
+    font-family: var(--font2);
+    margin: 0 0 14px;
+    font-size: 34px;
+    line-height: 1.08;
+}
+.hero p {
+    margin: 0 0 24px;
+    font-size: 17px;
+    color: rgba(255, 255, 255, 0.92);
+    max-width: 620px;
+}
+.hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+.hero-points {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.hero-card {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 12px;
+    box-shadow: 0 18px 36px rgba(116, 10, 34, 0.18);
+}
+.mock {
+    background: #fff;
+    border-radius: 15px;
+    color: var(--text);
+    padding: 15px;
+    box-shadow: 0 20px 40px rgba(92, 10, 28, 0.12);
+    font-family: var(--font3);
+}
+.mock h3 {
+    margin: 0 0 10px;
+    font-size: 21px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.mock .muted {
+  font-size: 15px;
+}
+
+.score-box {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 14px;
+}
+.mini {
+    background: #fff7f8;
+    border: 1px solid #f4d6de;
+    border-radius: 16px;
+    padding: 14px;
+}
+.mini strong {
+    display: block;
+    color: var(--primary);
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+section {
+    padding: 78px 0;
+}
+.section-head {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 34px;
+
+    h2 {
+      font-family: var(--font2);
+      font-size: 30px;
+      line-height: 1.3;
+    }
+}
+h2 {
+    margin: 0 0 12px;
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.15;
+}
+.section-head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 17px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+.card {
+    background: var(--card);
+    border: 1px solid #f2e1e5;
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 10px 24px rgba(30, 30, 30, 0.04);
+}
+.icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    background: #fff0f3;
+    color: var(--primary);
+    display: grid;
+    place-items: center;
+    font-size: 24px;
+    margin-bottom: 14px;
+}
+
+.solution {
+    background: var(--bg);
+}
+.solution-wrap {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 24px;
+    align-items: center;
+}
+.illustration {
+    background: linear-gradient(180deg, #fff, #fff0f4);
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+
+    h3 {
+      font-family: var(--font2);
+      font-weight: 500;
+      font-size: 22px;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+}
+.flow-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px dashed #ebc2cc;
+}
+.flow-item:last-child {
+    border-bottom: 0;
+}
+.flow-no {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    flex: none;
+}
+
+.pricing {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+.price-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: #fff;
+    border: 1px solid #f2e1e5;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 12px 28px rgba(30, 10, 15, 0.05);
+}
+.price-card.featured {
+    border: 2px solid var(--primary);
+    transform: translateY(-8px);
+    box-shadow: 0 18px 40px rgba(226, 61, 99, 0.18);
+}
+.ribbon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--primary);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+}
+.price {
+    font-size: 34px;
+    color: var(--primary);
+    font-weight: 800;
+    margin: 10px 0 12px;
+}
+.price-card ul {
+    padding-left: 18px;
+    margin: 0 0 22px;
+    list-style: disc;
+}
+.price-card li {
+    margin-bottom: 10px;
+}
+.price-card .btn {
+    margin-top: auto;
+}
+
+.test-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+.quiz {
+    background: #fff;
+    border: 1px solid #f2e1e5;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 12px 30px rgba(30, 10, 15, 0.05);
+}
+.question {
+    margin-bottom: 18px;
+}
+.question h4 {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+.option {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid #f0dce2;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+.option:hover {
+    background: #fff7f8;
+}
+input[type="radio"] {
+    margin-right: 8px;
+}
+input[type="text"],
+input[type="email"],
+select {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid #e8d4da;
+    font: inherit;
+    margin-bottom: 12px;
+}
+.muted {
+    color: var(--muted);
+}
+.result {
+    display: none;
+    margin-top: 18px;
+    background: #fff7f8;
+    border: 1px solid #f2d5de;
+    border-radius: 18px;
+    padding: 18px;
+}
+.result h3 {
+    margin: 0 0 8px;
+    color: var(--primary);
+}
+.cta {
+    background: linear-gradient(135deg, #d93258, #ef5379);
+    color: #fff;
+}
+.cta-box {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 30px;
+    padding: 40px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 20px;
+}
+
+.sticky-mobile {
+    display: none;
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    z-index: 30;
+    box-shadow: 0 20px 30px rgba(226, 61, 99, 0.2);
+}
+
+@media (max-width: 980px) {
+    .nav-links {
+        display: none;
+    }
+    .hero-wrap,
+    .solution-wrap,
+    .test-wrap,
+    .cta-box,
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+    .grid-3,
+    .pricing {
+        grid-template-columns: 1fr;
+    }
+    .price-card.featured {
+        transform: none;
+    }
+}
+@media (max-width: 680px) {
+    .nav {
+        height: 66px;
+    }
+    .hero-wrap {
+        padding: 54px 0 48px;
+    }
+    .hero p {
+        font-size: 16px;
+    }
+    section {
+        padding: 58px 0;
+    }
+    .sticky-mobile {
+        display: inline-flex;
+    }
+    body {
+        padding-bottom: 84px;
+    }
+}
+
+</style>
 <section class="hero">
     <div class="container hero-wrap">
       <div>
-        <span class="eyebrow">THUCHOCVN – Phiên bản xem ngay</span>
         <h1>7 ngày – kiếm được tiền đầu tiên</h1>
-        <p>Không cần kinh nghiệm. Không cần vốn. THUCHOCVN giúp bạn học nhanh, làm thật và có cơ hội tạo thu nhập thật ngay từ bước đầu tiên.</p>
+        <p class="italic">Không cần kinh nghiệm. Không cần vốn. THUCHOCVN giúp bạn học nhanh, làm thật và có cơ hội tạo thu nhập thật ngay từ bước đầu tiên.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#test">Test 2 phút ngay</a>
           <a class="btn btn-secondary" href="#goi">Xem 3 gói chương trình</a>
@@ -36,22 +499,21 @@
     <div class="container">
       <div class="section-head">
         <h2>THUCHOCVN dành cho ai?</h2>
-        <p>Bản landing page này được làm theo hướng chốt nhanh: nhìn là hiểu, test là có lead, tư vấn là chốt được.</p>
       </div>
       <div class="grid-3">
         <div class="card">
           <div class="icon">①</div>
-          <h3>Sinh viên chưa có kinh nghiệm</h3>
+          <h3 class="font-bold mb-2">Sinh viên chưa có kinh nghiệm</h3>
           <p class="muted">Cần môi trường bắt đầu nhanh, rõ ràng và ít rủi ro hơn so với tự mày mò.</p>
         </div>
         <div class="card">
           <div class="icon">②</div>
-          <h3>Người muốn kiếm thêm tiền</h3>
+          <h3 class="font-bold mb-2">Người muốn kiếm thêm tiền</h3>
           <p class="muted">Muốn thử sức trong môi trường thực chiến, có định hướng và được kèm sát hơn.</p>
         </div>
         <div class="card">
           <div class="icon">③</div>
-          <h3>Người muốn vào doanh nghiệp</h3>
+          <h3 class="font-bold mb-2">Người muốn vào doanh nghiệp</h3>
           <p class="muted">Muốn đi theo lộ trình làm thật, có kết nối cơ hội thay vì chỉ học lý thuyết.</p>
         </div>
       </div>
@@ -61,7 +523,7 @@
   <section class="solution">
     <div class="container solution-wrap">
       <div class="illustration">
-        <h3 style="margin-top:0; font-size:30px;">THUCHOCVN không dạy lý thuyết suông</h3>
+        <h3>THUCHOCVN không dạy lý thuyết suông</h3>
         <p class="muted">Mô hình đúng là: hiểu mình trước, chọn hướng phù hợp, rồi mới đi vào thực chiến.</p>
         <div class="flow-item">
           <div class="flow-no">1</div>
@@ -77,16 +539,7 @@
         </div>
       </div>
       <div>
-        <h2>Mô hình này phù hợp để đi hội chợ và chạy lead</h2>
-        <p class="muted">Thay vì chỉ xin CV, THUCHOCVN dùng landing page để lấy lead, phân loại khách và chốt theo nhu cầu thật.</p>
-        <div class="card" style="margin-top:18px;">
-          <h3 style="margin-top:0;">Lợi ích chính</h3>
-          <ul>
-            <li>Tăng tỷ lệ quét QR vì có yếu tố tò mò từ bài test.</li>
-            <li>Không chỉ lấy số điện thoại mà còn hiểu lead thuộc nhóm nào.</li>
-            <li>Sale follow-up nhanh hơn vì có sẵn logic HOT/WARM/COLD.</li>
-          </ul>
-        </div>
+        
       </div>
     </div>
   </section>
@@ -95,13 +548,12 @@
     <div class="container">
       <div class="section-head">
         <h2>3 gói sản phẩm THUCHOCVN</h2>
-        <p>Thiết kế để chốt theo từng mức độ sẵn sàng của người dùng.</p>
       </div>
       <div class="pricing">
         <div class="price-card">
           <h3>7 ngày kiếm tiền đầu tiên</h3>
           <div class="price">199k</div>
-          <p class="muted">Gói trải nghiệm cho người mới bắt đầu, cần vào nhanh và hiểu nghề rõ hơn.</p>
+          <p class="muted mb-2">Gói trải nghiệm cho người mới bắt đầu, cần vào nhanh và hiểu nghề rõ hơn.</p>
           <ul>
             <li>Định hướng nghề phù hợp</li>
             <li>Test và phân loại lead</li>
@@ -114,7 +566,7 @@
           <span class="ribbon">Nổi bật</span>
           <h3>14 ngày cầm tay kiếm tiền</h3>
           <div class="price">1–3 triệu</div>
-          <p class="muted">Gói sâu hơn để chốt nhóm thật sự nghiêm túc và muốn vào môi trường thực chiến mạnh hơn.</p>
+          <p class="muted mb-2">Gói sâu hơn để chốt nhóm thật sự nghiêm túc và muốn vào môi trường thực chiến mạnh hơn.</p>
           <ul>
             <li>Mentor theo sát</li>
             <li>Kịch bản làm việc thực tế</li>
@@ -126,7 +578,7 @@
         <div class="price-card">
           <h3>Vào doanh nghiệp làm thật</h3>
           <div class="price">Tư vấn</div>
-          <p class="muted">Dành cho người phù hợp nhóm thực chiến và muốn có cơ hội đi tiếp vào doanh nghiệp.</p>
+          <p class="muted mb-2">Dành cho người phù hợp nhóm thực chiến và muốn có cơ hội đi tiếp vào doanh nghiệp.</p>
           <ul>
             <li>Gắn với cơ hội thực tế</li>
             <li>Định hướng đúng nhóm</li>
@@ -143,7 +595,6 @@
     <div class="container">
       <div class="section-head">
         <h2>🔥 Test 2 phút: Bạn kiếm tiền theo cách nào?</h2>
-        <p>Làm test ngay trên landing page để xem trải nghiệm thực tế. Bản này là demo có logic chấm điểm trực tiếp trên trang.</p>
       </div>
       <div class="test-wrap">
         <div class="quiz">
@@ -171,8 +622,7 @@
         </div>
 
         <div class="quiz">
-          <h3 style="margin-top:0;">Nhập thông tin để nhận kết quả</h3>
-          <p class="muted">Ở bản production, phần này sẽ lưu vào CRM và tự phân loại lead.</p>
+          <h3 class="font-bold mb-3">Nhập thông tin để nhận kết quả</h3>
           <input type="text" id="name" placeholder="Họ và tên" />
           <input type="text" id="phone" placeholder="Số điện thoại" />
           <input type="email" id="email" placeholder="Email" />
@@ -214,7 +664,6 @@
     <div class="container">
       <div class="section-head">
         <h2>Câu hỏi thường gặp</h2>
-        <p>Bản này được làm để bạn xem layout và trải nghiệm ngay trong canvas.</p>
       </div>
       <div class="grid-3">
         <div class="card"><h3>Đây là bản demo hay bản chạy thật?</h3><p class="muted">Đây là bản demo tương tác để xem ngay. Bản production có thể nối backend/CRM thật.</p></div>

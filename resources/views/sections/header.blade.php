@@ -1,6 +1,6 @@
 <header class="bg-white border-b shadow-sm top-0 z-50">
-  <div class="container nav max-w-7xl mx-auto px-4">
-    <div class="flex items-center justify-between py-5 lg:py-6">
+  <div class="container nav mx-auto px-4">
+    <div class="flex items-center justify-between py-5 lg:py-6 w-full">
       
       <!-- Brand -->
       <div class="brand flex items-center gap-3">
